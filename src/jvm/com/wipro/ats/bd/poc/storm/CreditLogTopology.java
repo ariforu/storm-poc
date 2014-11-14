@@ -8,6 +8,7 @@ import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 import com.wipro.ats.bd.poc.storm.bolt.CreditCardAggregator;
 import com.wipro.ats.bd.poc.storm.bolt.FraudWeightCalculator;
+import com.wipro.ats.bd.poc.storm.bolt.PrinterBolt;
 import com.wipro.ats.bd.poc.storm.spout.CreditLogGeneratorSpout;
 
 
@@ -23,7 +24,7 @@ public class CreditLogTopology {
     builder.setSpout("spout", new CreditLogGeneratorSpout(), 5);
     //FraudWeightCalculator
     builder.setBolt("fraud", new FraudWeightCalculator(), 8).shuffleGrouping("spout");
-    //builder.setBolt("print", new PrinterBolt(), 8).shuffleGrouping("fraud");
+    builder.setBolt("print", new PrinterBolt(), 8).shuffleGrouping("fraud");
     builder.setBolt("messenger", new CreditCardAggregator(), 12).fieldsGrouping("fraud", new Fields("cardNum"));
 
     Config conf = new Config();
